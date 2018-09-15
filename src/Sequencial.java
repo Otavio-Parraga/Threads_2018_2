@@ -18,7 +18,7 @@ public class Sequencial {
 
   	for(int m=0;m<SIZE.length;m++) {
 	  for(int l=0;l<INTERATIONS;l++) {
-	// INICIALIZA OS ARRAYS A SEREM MULTIPLICADOS
+		// INICIALIZA OS ARRAYS A SEREM MULTIPLICADOS
 	    m1 = new int[SIZE[m]][SIZE[m]];
 	    m2 = new int[SIZE[m]][SIZE[m]];
 	    mres = new int[SIZE[m]][SIZE[m]];
@@ -27,25 +27,8 @@ public class Sequencial {
 	       System.exit(1);
 	    }
 	    int k=1;
-	    for (int i=0 ; i<SIZE[m]; i++) {
-	        for (int j=0 ; j<SIZE[m]; j++) {
-	            if (k%2==0)
-	               m1[i][j] = -k;
-	            else
-	               m1[i][j] = k;
-	        }
-	        k++;
-	    }
-	    k=1;
-	    for (int j=0 ; j<SIZE[m]; j++) {
-	        for (int i=0 ; i<SIZE[m]; i++) {
-	            if (k%2==0)
-	               m2[i][j] = -k;
-	            else
-	               m2[i][j] = k;
-	        }
-	        k++;
-	    }
+	    
+	    ArrayFiller.Fill(k, SIZE[m], m1, m2);
 	
 	    // PREPARA PARA MEDIR TEMPO
 	    long inicio = System.nanoTime(); 
@@ -67,32 +50,8 @@ public class Sequencial {
 	    WriteToFile.LogTime(SIZE[m], total);
 	
 	    // VERIFICA SE O RESULTADO DA MULTIPLICACAO ESTA CORRETO
-	    for (int i=0 ; i<SIZE[m]; i++) {
-	        k = SIZE[m]*(i+1);
-	        for (int j=0 ; j<SIZE[m]; j++) {
-	            int k_col = k*(j+1);
-	            if (i % 2 ==0) {
-	               if (j % 2 == 0) {
-	                  if (mres[i][j]!=k_col)
-	                     System.exit(1);
-	               }
-	               else {
-	                  if (mres[i][j]!=-k_col)
-	                     System.exit(1);
-	               }
-	            }
-	            else {
-	               if (j % 2 == 0) {
-	                  if (mres[i][j]!=-k_col)
-	                     System.exit(1);
-	               }
-	               else {
-	                  if (mres[i][j]!=k_col)
-	                     System.exit(1);
-	               }
-	            }
-	        } 
-	    }
+	    ArrayFiller.Check(SIZE[m], mres, k);
+	    
 	    // MOSTRA O TEMPO DE EXECUCAO
 	    System.out.printf("%f",total);
 	  	}
