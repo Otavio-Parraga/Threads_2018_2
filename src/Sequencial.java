@@ -1,25 +1,17 @@
-/**
- * Programa em Java correspondente à versão sequencial da multiplicação de
- * matrizes.
- * 
- * @autor Roland Teodorowitsch
- * @version 4 set. 2018
- */
-
 public class Sequencial {
-
 	// DIMENSOES DAS MATRIZES
-	public static final int[] SIZE = { 2000};
+	public static final int[] SIZE = {2000, 1000, 500, 100};
 	public static final int INTERATIONS = 10;
+	// QUANTIDADE DE THREADS
+	public static final int QNTDTHREADS = 8;
+	
 	// ESTRUTURAS DE DADOS COMPARTILHADA
 	public static int[][] m1;
 	public static int[][] m2;
 	public static int[][] mres;
-	// QUANTIDADE DE THREADS
-	public static final int QNTDTHREADS = 1;
-
+	public static Thread[] threadsArr = new Thread[QNTDTHREADS];
+	
 	public static void main(String[] args) {
-
 		for (int m = 0; m < SIZE.length; m++) {
 			for (int l = 0; l < INTERATIONS; l++) {
 				// INICIALIZA OS ARRAYS A SEREM MULTIPLICADOS
@@ -31,40 +23,44 @@ public class Sequencial {
 					System.exit(1);
 				}
 				int k = 1;
-
-				ArrayFiller.Fill(k, SIZE[m], m1, m2);
-
-				// PREPARA PARA MEDIR TEMPO
-				long inicio = System.nanoTime();
-
-//				 REALIZA MULTIPLICACAO
-				Thread t1 = new Thread(new MultiplicaMatriz(0,500));
-				t1.start();
-				Thread t2 = new Thread(new MultiplicaMatriz(500,1000));
-				t2.start();
-				Thread t3 = new Thread(new MultiplicaMatriz(1000,1500));
-				t3.start();
-				Thread t4 = new Thread(new MultiplicaMatriz(1500,2000));
-				t4.start();
 				
+				ArrayFiller.Fill(k, SIZE[m], m1, m2);
+								
+				// PREPARA PARA MEDIR TEMPO
+				
+				int intervalo = SIZE[m]/QNTDTHREADS;
+				// cria as threads
+
+				long inicio = System.nanoTime();
+				
+				for(int c=0;c<QNTDTHREADS;c++){
+					threadsArr[c] = new Thread(new MultiplicaMatriz(c*intervalo,c*intervalo + intervalo));
+				}
+				
+				//starta as threads
+				for(int c=0;c<QNTDTHREADS;c++){
+					threadsArr[c].start();
+				}
+				
+				//join threads
 				try {
-				t1.join();
-				t2.join();
-				t3.join();
-				t4.join();
+					for(int c=0;c<QNTDTHREADS;c++){
+						threadsArr[c].join();
+					}
 				} catch (Exception e) {
-					
+					System.out.println("Erro: "+ e.getMessage().toString());
 				}
 				
 				// OBTEM O TEMPO
 				long fim = System.nanoTime();
+				
 				double total = (fim - inicio) / 1000000000.0;
-
+		
 				// VERIFICA SE O RESULTADO DA MULTIPLICACAO ESTA CORRETO
 				ArrayFiller.Check(SIZE[m], mres, k);
-
+		
 				WriteToFile.LogTime(SIZE[m], total, QNTDTHREADS);
-
+		
 				// MOSTRA O TEMPO DE EXECUCAO
 				System.out.printf("%f", total);
 			}

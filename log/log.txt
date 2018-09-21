@@ -8,3 +8,4 @@ NumThreads: 1 - Array:2000 - Tempo: 28.355847671
 NumThreads: 1 - Array:2000 - Tempo: 28.217442112
 NumThreads: 1 - Array:2000 - Tempo: 28.879163918
 NumThreads: 1 - Array:2000 - Tempo: 27.453350405
+NumThreads: 8 - Array:2000 - Tempo: 36.570087449
